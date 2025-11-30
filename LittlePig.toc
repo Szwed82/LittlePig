@@ -1,0 +1,8 @@
+## Interface: 11200
+## Title: LittlePig
+## Version: 7.0
+## Notes: type /lp first time in order to setup the addon so it suit's you.
+## Author: Otari
+## SavedVariables: LPCONFIG
+
+LittlePig.xml
