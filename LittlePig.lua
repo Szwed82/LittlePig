@@ -53,16 +53,6 @@ function LittlePig_Command()
 	end
 end
 
-function LittlePig_OnUpdate()
-	if (this.tick or 0.1) > GetTime() then
-		return
-	else
-		this.tick = GetTime() + 0.1
-	end
-
-	ScheduleFunctionLaunch();
-end
-
 function ScheduleFunctionLaunch(func, delay)
 	local current_time = GetTime()
 	if func and not ScheduleFunction[func] then
