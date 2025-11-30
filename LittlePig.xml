@@ -10,9 +10,6 @@ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
 			<OnEvent>
 				LittlePig_OnEvent(event)
 			</OnEvent>
-			<OnUpdate>
-				LittlePig_OnUpdate()
-			</OnUpdate>
 		</Scripts>
 		<Anchors>
 			<Anchor point="TOP" relativeTo="PVPArenaTextString" relativePoint="BOTTOM" />
