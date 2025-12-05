@@ -53,21 +53,6 @@ function LittlePig_Command()
 	end
 end
 
-function ScheduleFunctionLaunch(func, delay)
-	local current_time = GetTime()
-	if func and not ScheduleFunction[func] then
-		delay = delay or 0.75
-		ScheduleFunction[func] = current_time + delay
-	else
-		for blockindex,blockmatch in pairs(ScheduleFunction) do
-			if current_time >= blockmatch then
-				blockindex()
-				ScheduleFunction[blockindex] = nil
-			end
-		end
-	end
-end
-
 function LittlePig_OnEvent(event)
 	if event == "ADDON_LOADED" and arg1 == "LittlePig" then
 		this:UnregisterEvent("ADDON_LOADED")
@@ -79,7 +64,7 @@ function LittlePig_OnEvent(event)
 		LittlePig_CreateOptionsFrame()
 		LittlePig_CheckSalvation();
 		LittlePig_CheckManaBuffs();
-		ScheduleFunctionLaunch(LittlePig_ZoneCheck, 6);
+		LittlePig_ZoneCheck();
 
 		if LPCONFIG.LOOT then
 			UIPanelWindows["LootFrame"] = nil
@@ -96,7 +81,7 @@ function LittlePig_OnEvent(event)
 		LittlePig_CheckSalvation()
 	
 	elseif event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_UNGHOST" then
-		ScheduleFunctionLaunch(LittlePig_ZoneCheck, 5)
+		LittlePig_ZoneCheck()
 
 	elseif event == "CHAT_MSG_SYSTEM" then
 		if arg1 == CLEARED_DND or arg1 == CLEARED_AFK then
@@ -116,18 +101,6 @@ function LittlePig_OnEvent(event)
 			StaticPopup_Hide("RESURRECT");
 		end
 		TargetLastTarget();
-	end
-	--DEFAULT_CHAT_FRAME:AddMessage(event);
-end
-
-function LittlePig_Text(txt)
-	if txt then
-		LittlePigText:SetTextColor(0, 1, 0)
-		LittlePigText:SetText(txt)
-		LittlePigText:Show()
-	else
-		LittlePigText:SetText()
-		LittlePigText:Hide()
 	end
 end
 
@@ -368,15 +341,15 @@ end
 function LittlePig_ChatFrame_OnEvent(event)
 	if event == "CHAT_MSG_LOOT" or event == "CHAT_MSG_MONEY" then
 		local check_zg_aq = string.find(arg1 ,"Bijou") or string.find(arg1 ,"Coin") or string.find(arg1 ,"Idol") or string.find(arg1, "Scarab")
-		local check_uncommon = LPCONFIG.SPAM_UNCOMMON and string.find(arg1 ,"1eff00")
-		local check_rare = LPCONFIG.SPAM_RARE and string.find(arg1 ,"0070dd")
+		local check_green = LPCONFIG.SPAM_UNCOMMON and string.find(arg1 ,"1eff00")
+		local check_blue = LPCONFIG.SPAM_RARE and string.find(arg1 ,"0070dd")
 		local check_epic = LPCONFIG.SPAM_EPIC and string.find(arg1 ,"a335ee")
 		local check_white = LPCONFIG.SPAM_LOOT and (string.find(arg1 ,"9d9d9d") or string.find(arg1 ,"ffffff"))
 		local check_money = LPCONFIG.SPAM_LOOT and string.find(arg1 ,"Your share of the loot")
 
 		local check_you = string.find(arg1 ,"You") or string.find(arg1 ,"won") or string.find(arg1 ,"receive")
 		
-		if (not check_you and (check_uncommon or check_rare or check_epic or check_white)) or check_money or check_zg_aq then
+		if (not check_you and (check_green or check_blue or check_epic or check_white)) or check_money or check_zg_aq then
 			return
 		end
 	end
@@ -393,5 +366,3 @@ function LittlePig_ChatFrame_OnEvent(event)
 	
 	Original_ChatFrame_OnEvent(event);
 end
-
-
