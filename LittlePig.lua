@@ -36,7 +36,6 @@ function LittlePig_OnLoad()
 	this:RegisterEvent("ADDON_LOADED")
 	this:RegisterEvent("PLAYER_LOGIN")
 	this:RegisterEvent("CHAT_MSG")
-	this:RegisterEvent("CHAT_MSG_SYSTEM")
 	this:RegisterEvent("RESURRECT_REQUEST")
 	this:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 	this:RegisterEvent("PLAYER_UNGHOST")
@@ -82,14 +81,6 @@ function LittlePig_OnEvent(event)
 	
 	elseif event == "ZONE_CHANGED_NEW_AREA" or event == "PLAYER_UNGHOST" then
 		LittlePig_ZoneCheck()
-
-	elseif event == "CHAT_MSG_SYSTEM" then
-		if arg1 == CLEARED_DND or arg1 == CLEARED_AFK then
-			afk_active = false
-
-		elseif string.find(arg1, string.sub(MARKED_DND, 1, string.len(MARKED_DND) -3)) then
-			afk_active = false
-		end
 
 	elseif event == "RESURRECT_REQUEST" and LPCONFIG.REZ then
 		UIErrorsFrame:AddMessage(arg1.." - Resurrection")
