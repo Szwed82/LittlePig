@@ -2,7 +2,6 @@ local _G = _G or getfenv(0)
 
 -- Default SavedVariables
 LPCONFIG = {}
-LPCONFIG.LOOT = false               -- Position loot frame at cursor
 LPCONFIG.WORLDDUNGEON = false       -- Mute Wolrd chat while in dungeons
 LPCONFIG.WORLDRAID = false          -- Mute Wolrd chat while in raid
 LPCONFIG.WORLDBG = false            -- Mute Wolrd chat while in battleground
@@ -15,8 +14,6 @@ LPCONFIG.REZ = false                -- Auto accept resurrection while in raid, d
 LPCONFIG.SALVA = nil                -- [number or nil] Autoremove Blessing of Salvation
 LPCONFIG.REMOVEMANABUFFS = false    -- Autoremove Blessing of Wisdom, Arcane Intellect, Prayer of Spirit from Warrior or Rogue
 
-local OriginalLootFrame_OnEvent = LootFrame_OnEvent;
-local OriginalLootFrame_Update = LootFrame_Update;
 local Original_ChatFrame_OnEvent = ChatFrame_OnEvent;
 
 local channelstatus = nil
@@ -25,8 +22,6 @@ local ScheduleFunction = {}
 local ChatMessage = {{}, {}, INDEX = 1}
 
 function LittlePig_OnLoad()
-	LootFrame_OnEvent = LittlePig_LootFrame_OnEvent;
-	LootFrame_Update = LittlePig_LootFrame_Update;
 	ChatFrame_OnEvent = LittlePig_ChatFrame_OnEvent;
 	
 	SLASH_LITTLEPIG1 = "/lp";
@@ -65,10 +60,6 @@ function LittlePig_OnEvent(event)
 		LittlePig_CheckManaBuffs();
 		LittlePig_ZoneCheck();
 
-		if LPCONFIG.LOOT then
-			UIPanelWindows["LootFrame"] = nil
-		end
-
 	elseif event == "PLAYER_AURAS_CHANGED" then
 		LittlePig_CheckSalvation()
 		LittlePig_CheckManaBuffs()
@@ -93,50 +84,6 @@ function LittlePig_OnEvent(event)
 		end
 		TargetLastTarget();
 	end
-end
-
---code taken from quickloot
-local function LittlePig_ItemUnderCursor()
-	if LPCONFIG.LOOT then
-		local x, y = GetCursorPosition();
-		local scale = LootFrame:GetEffectiveScale();
-		x = x / scale;
-		y = y / scale;
-		LootFrame:ClearAllPoints();
-		for index = 1, LOOTFRAME_NUMBUTTONS, 1 do
-			local button = _G["LootButton"..index];
-			if  button:IsVisible() then
-				x = x - 42;
-				y = y + 56 + (40 * index);
-				LootFrame:SetPoint("TOPLEFT", "UIParent", "BOTTOMLEFT", x, y);
-				return;
-			end
-		end
-		if LootFrameDownButton:IsVisible() then
-			x = x - 158;
-			y = y + 223;
-		else
-			if GetNumLootItems() == 0  then
-				HideUIPanel(LootFrame);
-				return
-			end
-			x = x - 173;
-			y = y + 25;
-		end
-		LootFrame:SetPoint("TOPLEFT", "UIParent", "BOTTOMLEFT", x, y);
-	end
-end
-
-function LittlePig_LootFrame_OnEvent(event)
-	OriginalLootFrame_OnEvent(event);
-	if event == "LOOT_SLOT_CLEARED" then
-		LittlePig_ItemUnderCursor();
-	end
-end
-
-function LittlePig_LootFrame_Update()
-	OriginalLootFrame_Update();
-	LittlePig_ItemUnderCursor();
 end
 
 function LittlePig_Raid()
